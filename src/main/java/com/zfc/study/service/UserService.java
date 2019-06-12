@@ -9,4 +9,6 @@ public interface UserService {
     List<User> queryList();
 
     int insertList(List<User> list);
+
+    int insert(User user);
 }

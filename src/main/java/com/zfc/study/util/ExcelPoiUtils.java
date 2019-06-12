@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.zfc.study.exportExcel.ListSource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
@@ -13,6 +14,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,6 +31,7 @@ import java.util.Locale;
 @Slf4j
 public class ExcelPoiUtils {
 
+
     /**
      * @Author zufeichao
      * @Description //TODO
@@ -36,7 +39,60 @@ public class ExcelPoiUtils {
      * @Param [filePath]
      * @return java.util.List<java.lang.String[]>
      **/
-    public List<String[]> readExcel(String filePath){
+    public static List<String[]> readExcel(InputStream ips){
+        List<String[]> dataList = new ArrayList<String[]>();
+        boolean isExcel2003 = true;
+    /*    if(isExcel2007(file.getName())){
+            isExcel2003 = false;
+        }*/
+ /*       InputStream ips =null;
+        try {
+            ips = new FileInputStream(file);
+        }catch (FileNotFoundException ex){
+            log.warn("读文件失败：{}",ex.getMessage());
+        }*/
+        Workbook wb = null;
+        try {
+            wb = isExcel2003 ? new HSSFWorkbook(ips) : new XSSFWorkbook(ips);
+        }catch (IOException ex){
+            log.warn("创建workbook失败：{}",ex.getMessage());
+        }
+        Sheet sheet = wb.getSheetAt(0);
+        int totalRows = sheet.getPhysicalNumberOfRows();
+        int totalCells = 0;
+        if(totalRows >= 1 && sheet.getRow(0) != null){
+            totalCells = sheet.getRow(0).getPhysicalNumberOfCells();
+        }
+        for (int r = 0 ; r < totalRows ; r++){
+            Row row = sheet.getRow(r);
+            if (row == null){
+                continue;
+            }
+            String[] rowList = new String[totalCells];
+            for (int c = 0; c < totalCells; c++){
+                Cell cell = row.getCell(c);
+                String cellValue = "";
+                if(cell == null){
+                    rowList[c] = cellValue;
+                    continue;
+                }
+                cellValue = ConvertCellStr(cell,cellValue);
+                rowList[c] = cellValue;
+            }
+            dataList.add(rowList);
+        }
+
+        return dataList;
+    }
+
+    /**
+     * @Author zufeichao
+     * @Description //TODO
+     * @Date 21:00 2019/6/11
+     * @Param [filePath]
+     * @return java.util.List<java.lang.String[]>
+     **/
+    public static List<String[]> readExcel(String filePath){
         List<String[]> dataList = new ArrayList<String[]>();
         boolean isExcel2003 = true;
         if(isExcel2007(filePath)){
@@ -90,7 +146,7 @@ public class ExcelPoiUtils {
      * @Param [filePath]
      * @return void
      **/
-    public void writeExcel(String filePath) throws Exception{
+    public static void writeExcel(String filePath) throws Exception{
 
         List<List<String>> dateList = new ListSource().listSource();
 
@@ -178,7 +234,7 @@ public class ExcelPoiUtils {
 
 
 
-    private String ConvertCellStr(Cell cell,String cellStr){
+    private static String ConvertCellStr(Cell cell,String cellStr){
         switch (cell.getCellType()){
             case Cell.CELL_TYPE_STRING :
                 //String
@@ -194,7 +250,7 @@ public class ExcelPoiUtils {
                     cellStr = formatTime(cell.getDateCellValue().toString());
                 } else {
                     // 读取数字
-                    cellStr = String.valueOf(cell.getNumericCellValue());
+                    cellStr = formatNumberToString(cell.getNumericCellValue());
                 }
                 break;
             case Cell.CELL_TYPE_FORMULA:
@@ -207,7 +263,7 @@ public class ExcelPoiUtils {
         return cellStr;
     }
 
-    private String formatTime(String s) {
+    private static String formatTime(String s) {
         SimpleDateFormat sf = new SimpleDateFormat("EEE MMM dd hh:mm:ss z yyyy", Locale.ENGLISH);
         Date date = null;
         try {
@@ -220,13 +276,18 @@ public class ExcelPoiUtils {
         return result;
     }
 
-    private boolean isExcel2007(String fileName){
-        return fileName.matches("^.+\\.(?i)(xlss)$");
+    private static boolean isExcel2007(String fileName){
+        return fileName.matches("^.+\\.(?i)(xlsx)$");
+    }
+
+    private static String formatNumberToString(double value){
+        DecimalFormat df = new DecimalFormat("0");
+        return df.format(value);
     }
 
     public static void main(String[] args) throws IOException {
-        ExcelPoiUtils re = new ExcelPoiUtils();
-        List<String[]> list = re.readExcel("C:\\Users\\11190\\Desktop\\测试user (2).xls");
+
+        List<String[]> list = ExcelPoiUtils.readExcel("C:\\Users\\11190\\Desktop\\测试user (2).xls");
        // List<String[]> list = re.readExcel("c:/群组.xlsx");
         if (list != null) {
             for (int i = 0; i < list.size(); i++) {
@@ -242,7 +303,7 @@ public class ExcelPoiUtils {
         System.out.println("===============================================");
         try {
 
-            re.writeExcel("D:\\test.xls");
+            ExcelPoiUtils.writeExcel("D:\\test.xls");
         }catch (Exception e){
             e.printStackTrace();
         }
