@@ -24,7 +24,7 @@ public class ExcelPropertiesUtil {
         InputStream in = null;
 
         try {
-            in = PropertiesConfig.class.getClassLoader().getResourceAsStream("excel.properties");
+            in = ExcelPropertiesUtil.class.getClassLoader().getResourceAsStream("excel.properties");
             properties.load(in);
             for(Object key : properties.keySet()){
                 String keyStr  = key.toString();
