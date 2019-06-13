@@ -17,7 +17,9 @@ public class DateUtils {
 
     private static final String FORMAT_DATE_STR = "yyyy-MM-dd";
 
-    private static final String FORMAT_DATE_TIME_STR = "yyyy-MM-dd hh:mm:ss";
+    private static final String FORMAT_DATE_TIME_STR = "yyyy-MM-dd HH:mm:ss";
+
+    private static final String FORMAT_DATE_TIME_STR2 = "yyyyMMddHHmmss";
 
     public static String formatToString(LocalDate ld){
         return format(ld,FORMAT_DATE_STR);
@@ -25,6 +27,10 @@ public class DateUtils {
 
     public static String formatDateTimeToString(LocalDateTime localDateTime){
         return formatDateTime(localDateTime,FORMAT_DATE_TIME_STR);
+    }
+
+    public static String formatDateTimeToString2(LocalDateTime localDateTime){
+        return formatDateTime(localDateTime,FORMAT_DATE_TIME_STR2);
     }
 
     /**

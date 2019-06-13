@@ -5,17 +5,23 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.zfc.study.domain.entity.User;
 import com.zfc.study.service.UserService;
+import com.zfc.study.util.DateUtils;
 import com.zfc.study.util.ExcelPoiUtils;
+import com.zfc.study.util.ExcelPropertiesUtil;
 import com.zfc.study.util.ExcelUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.cglib.beans.BeanMap;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Field;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author zufeichao
@@ -64,6 +70,45 @@ public class ExcelController {
         return message;
     }
 
+    @GetMapping("exportExcel")
+    public void exportExcel(HttpServletResponse response) throws Exception{
+
+        List<User> userList = userService.queryList();
+        List<Map<String,Object>> mapList = new ArrayList<>();
+        userList.forEach(user->{
+            Map<String,Object> map = object2Map(user);
+            mapList.add(map);
+        });
+        List<String> fieldList = ExcelPropertiesUtil.getProperties("user.export");
+        String fileName = DateUtils.formatDateTimeToString2(LocalDateTime.now()) + ".xls";
+        ExcelPoiUtils.writeExcel2(fileName,mapList,fieldList,response);
+
+
+    }
+
+
+    /**
+          * 实体对象转成Map
+          * @param obj 实体对象
+          * @return
+          */
+     public static Map<String, Object> object2Map(Object obj) {
+            Map<String, Object> map = new HashMap<>();
+            if (obj == null) {
+                return map;
+            }
+            Class clazz = obj.getClass();
+            Field[] fields = clazz.getDeclaredFields();
+            try {
+                for (Field field : fields) {
+                    field.setAccessible(true);
+                    map.put(field.getName(), field.get(obj));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return map;
+    }
 
 
 

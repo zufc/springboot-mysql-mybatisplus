@@ -4,6 +4,8 @@ import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.google.common.collect.Lists;
 import com.zfc.study.exportExcel.ListSource;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.*;
@@ -13,14 +15,14 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import javax.servlet.http.HttpServletResponse;
+import javax.swing.filechooser.FileSystemView;
 import java.io.*;
+import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 /**
  * @Author zufeichao
@@ -176,6 +178,64 @@ public class ExcelPoiUtils {
 
     }
 
+
+    public static void  writeExcel2(String fileName,List<Map<String,Object>> dataMapList, List<String> fieldList,HttpServletResponse response)throws Exception{
+
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet("sheet");//添加sheet
+        //表格样式
+        HSSFCellStyle style = wb.createCellStyle();
+        style.setAlignment(HSSFCellStyle.ALIGN_CENTER);//指定单元格居中对齐
+
+        HSSFRow row = null;
+        //表头
+        if(CollectionUtils.isNotEmpty(dataMapList)){
+            row = sheet.createRow(0);
+            for (int j = 0; j < fieldList.size(); j++) {
+                HSSFCell cell = row.createCell(j);
+                cell.setCellValue(fieldList.get(j));
+                cell.setCellStyle(style);
+            }
+
+        }
+
+        for (int i = 1; i < dataMapList.size(); i++) {
+            row = sheet.createRow(i);
+
+            Map<String,Object> dataMap = dataMapList.get(i);
+            for (int j = 0; j < fieldList.size(); j++) {
+                HSSFCell cell = row.createCell(j);
+                cell.setCellValue(MapUtils.getString(dataMap,fieldList.get(j)));
+                cell.setCellStyle(style);
+            }
+        }
+        FileSystemView fsv = FileSystemView.getFileSystemView();//获取本的桌面路径
+        String filePath = fsv.getHomeDirectory().toString()+"\\"+fileName;
+        log.info(filePath);
+
+        FileOutputStream fout = new FileOutputStream(filePath);
+        wb.write(fout);
+
+        //doResponseExcel(fileName,response,wb);
+
+
+
+    }
+
+    private static void doResponseExcel(String fileName, HttpServletResponse response, HSSFWorkbook workbook) {
+        try {
+
+            response.setHeader("Content-disposition","attachment;filename="
+                    +new String(fileName.getBytes("gb2312"),"ISO8859-1"));    //设置文件头编码格式
+            response.setContentType("APPLICATION/OCTET-STREAM;charset=UTF-8");//设置类型
+            response.setHeader("Cache-Control","no-cache");//设置头
+            response.setDateHeader("Expires", 0);//设置日期头
+
+            workbook.write(response.getOutputStream());
+        } catch (IOException e) {
+            log.error("输出客户端失败",e.getMessage());
+        }
+    }
 
     /**
      * xlsx
