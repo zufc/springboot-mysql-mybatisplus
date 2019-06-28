@@ -28,5 +28,15 @@ public class RocketMQProducerUtil {
         }
     }
 
+    public static void sendMessage(String topic,String tags,Object object){
+        Message message = new Message(topic, tags, JSON.toJSONString(object).getBytes());
+        try {
+            SendResult sendResult = producer.send(message);
+            log.info("发送了消息{}",sendResult);
+        }catch (Exception e){
+            log.error("MQ下发失败",e);
+        }
+    }
+
 
 }

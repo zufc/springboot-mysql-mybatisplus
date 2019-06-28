@@ -1,5 +1,6 @@
 package com.zfc.study.controller;
 
+import com.zfc.study.exception.BusinessException;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,8 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class BaseErrorController {
     @RequestMapping("/json")
-    public void json(ModelMap modelMap) {
+    public void json(ModelMap modelMap) throws Exception{
         System.out.println(modelMap.get("author"));
-        int i=5/0;
+        String s = null;
+        if (s == null){
+            throw  new BusinessException("500","字段为空");
+        }
     }
 }
