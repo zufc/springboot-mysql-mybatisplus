@@ -51,4 +51,10 @@ public class UserServiceImpl implements UserService {
     }
 
 
+    public static class inner{
+        public void print(){
+            System.out.println("静态内部类");
+        }
+    }
+
 }
