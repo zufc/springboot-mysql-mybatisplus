@@ -2,6 +2,7 @@ package com.zfc.study.util;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -136,6 +137,119 @@ public class PdfUtil {
 		}
 
 	}
+
+	public static void createPdf(String filePath, OutputStream outputStream) throws Exception{
+
+		//String filePath = "D:\\test.pdf";
+	/*	File file = new File(filePath);
+		if (!file.exists()){
+			file.createNewFile();
+		}*/
+		//outputStream(file);
+
+		Document document = new Document();
+		PdfWriter.getInstance(document,outputStream);
+		document.open();
+
+		PdfPTable table = new PdfPTable(6);
+
+		/* 企业全称 */
+		PdfUtil.addTableCell(table, "企业全称", fontChina12, false, false, 0, 0);
+		PdfUtil.addTableCell(table, "蔚来", fontChina12, true, false, 2, 0);//跨两列
+
+		/* 企业简称 */
+		PdfUtil.addTableCell(table, "企业简称", fontChina12, false, false, 0, 0);
+		PdfUtil.addTableCell(table, "WL", fontChina12, true, false, 2, 0);//跨两列
+
+		/* 法定代表人 */
+		PdfUtil.addTableCell(table, "法定代表人", fontChina12, false, false, 0, 0);
+		PdfUtil.addTableCell(table, "大口大口", fontChina12, true, false, 2, 0);//跨两列
+
+		/* 联系电话 */
+		PdfUtil.addTableCell(table, "联系电话", fontChina12, false, false, 0, 0);
+		PdfUtil.addTableCell(table, "132431", fontChina12, true, false, 2, 0);//跨两列
+
+		/* 电子邮箱 */
+		PdfUtil.addTableCell(table, "电子邮箱", fontChina12, false, false, 0, 0);
+		PdfUtil.addTableCell(table, "13431135@xxx.com", fontChina12, true, false, 2, 0);//跨两列
+
+		/* 企业网址 */
+		PdfUtil.addTableCell(table, "企业网址", fontChina12, false, false, 0, 0);
+		PdfUtil.addTableCell(table, "www.wl.com", fontChina12, true, false, 2, 0);//跨两列
+
+		/* 营业执照号 */
+		PdfUtil.addTableCell(table, "营业执照号", fontChina12, false, false, 0, 0);
+		PdfUtil.addTableCell(table, "djfdkfj1214312521", fontChina12, true, false, 2, 0);//跨两列
+
+		/* 注册日期 */
+		PdfUtil.addTableCell(table, "注册日期", fontChina12, false, false, 0, 0);
+		PdfUtil.addTableCell(table, "2019-10-30", fontChina12, true, false, 2, 0);//跨两列
+
+		/* 企业住址 */
+		PdfUtil.addTableCell(table, "企业住址", fontChina12, false, false, 0, 0);
+		PdfUtil.addTableCell(table, "地球", fontChina12, true, false, 2, 0);//跨两列
+
+		/* 注册地 */
+		PdfUtil.addTableCell(table, "注册地", fontChina12, false, false, 0, 0);
+		PdfUtil.addTableCell(table, "大地球", fontChina12, true, false, 2, 0);//跨两列
+
+		/* 注册资本（万元） */
+		PdfUtil.addTableCell(table, "注册资本（万元）", fontChina12, false, false, 0, 0);
+		PdfUtil.addTableCell(table, "11111", fontChina12, true, false, 5, 0);//跨五列
+
+		/* 经营范围 */
+		PdfUtil.addTableCell(table, "经营范围", fontChina12, false, false, 0, 0);
+		PdfUtil.addTableCell(table, "sadfkljajfadklj", fontChina12, true, false, 5, 0);//跨五列
+
+		/* 财务状况 */
+		PdfUtil.addTableCell(table, "财务状况", fontChina12, false, true, 0, 4);// 跨四行
+
+		PdfUtil.addTableCell(table, "年份\n（期限）", fontChina12, false, false, 0, 0);
+		PdfUtil.addTableCell(table, "总资产\n（万元）", fontChina12, false, false, 0, 0);
+		PdfUtil.addTableCell(table, "净资产\n（万元）", fontChina12, false, false, 0, 0);
+		PdfUtil.addTableCell(table, "营业收入\n（万元）", fontChina12, false, false, 0, 0);
+		PdfUtil.addTableCell(table, "净利润\n（万元）", fontChina12, false, false, 0, 0);
+		PdfUtil.addTableCell(table, " ", fontChina12, false, false, 0, 0);
+		PdfUtil.addTableCell(table, " ", fontChina12, false, false, 0, 0);
+		PdfUtil.addTableCell(table, " ", fontChina12, false, false, 0, 0);
+		PdfUtil.addTableCell(table, " ", fontChina12, false, false, 0, 0);
+		PdfUtil.addTableCell(table, " ", fontChina12, false, false, 0, 0);
+		PdfUtil.addTableCell(table, " ", fontChina12, false, false, 0, 0);
+		PdfUtil.addTableCell(table, " ", fontChina12, false, false, 0, 0);
+		PdfUtil.addTableCell(table, " ", fontChina12, false, false, 0, 0);
+		PdfUtil.addTableCell(table, " ", fontChina12, false, false, 0, 0);
+		PdfUtil.addTableCell(table, " ", fontChina12, false, false, 0, 0);
+		PdfUtil.addTableCell(table, " ", fontChina12, false, false, 0, 0);
+		PdfUtil.addTableCell(table, " ", fontChina12, false, false, 0, 0);
+		PdfUtil.addTableCell(table, " ", fontChina12, false, false, 0, 0);
+		PdfUtil.addTableCell(table, " ", fontChina12, false, false, 0, 0);
+		PdfUtil.addTableCell(table, " ", fontChina12, false, false, 0, 0);
+		/* ------->> 财务状况结束 <<-------- */
+
+		PdfPCell cell46 = new PdfPCell();
+		cell46.setRowspan(2);
+		cell46.setPhrase(new Paragraph("备注", fontChina12));
+		cell46.setVerticalAlignment(PdfPCell.ALIGN_MIDDLE);
+		cell46.setVerticalAlignment(Element.ALIGN_MIDDLE);
+		cell46.setHorizontalAlignment(Element.ALIGN_CENTER);
+		cell46.setMinimumHeight(100);
+		table.addCell(cell46);
+		PdfPCell cell47 = new PdfPCell();
+		cell47.setColspan(5);
+		cell47.setPhrase(new Paragraph(" ", fontChina12));
+		cell47.setVerticalAlignment(PdfPCell.ALIGN_MIDDLE);
+		cell47.setVerticalAlignment(Element.ALIGN_MIDDLE);
+		cell47.setHorizontalAlignment(Element.ALIGN_CENTER);
+		cell47.setMinimumHeight(100);
+		table.addCell(cell47);
+
+		document.add(table);
+
+		document.close();
+
+
+	}
+
 
 	public static void main(String[] args) throws Exception{
 

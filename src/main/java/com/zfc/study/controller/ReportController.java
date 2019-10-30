@@ -1,5 +1,6 @@
 package com.zfc.study.controller;
 
+import com.zfc.study.util.PdfUtil;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,12 +36,15 @@ public class ReportController {
             outputStream = new BufferedOutputStream(response.getOutputStream());
             //生成pdf文件
            // TestModel.createBusinessInfoPDF(outputStream);
+            PdfUtil.createPdf(fileName,outputStream);
             outputStream.flush();
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
             try {
                 if (outputStream != null) {
                     outputStream.close();
