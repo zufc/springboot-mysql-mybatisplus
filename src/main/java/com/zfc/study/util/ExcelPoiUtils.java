@@ -1,13 +1,12 @@
 package com.zfc.study.util;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
+
 import com.google.common.collect.Lists;
 import com.zfc.study.exportExcel.ListSource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
@@ -18,11 +17,12 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import javax.servlet.http.HttpServletResponse;
 import javax.swing.filechooser.FileSystemView;
 import java.io.*;
-import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import static java.util.stream.Collectors.groupingBy;
 
 /**
  * @Author zufeichao
@@ -346,24 +346,29 @@ public class ExcelPoiUtils {
     }
 
     public static void main(String[] args) throws IOException {
+        String sql="INSERT INTO `mall_category` VALUES ({{id}}, 123456, {{level}}, {{code}}, {{name}},{{desc}}, {{parent_id}}, null, {{sort}}, {{isLeaf}}, 'c425517a7990421c85f8e37743239c66', '贝朗医疗（上海）国际贸易有限公司', 'showyu', '1176779047980630057', 'beilang1', '2019-10-12 21:18:48', '1176779047980630057', 'beilang1', '2019-10-12 21:18:48', 0);\n";
 
-        List<String[]> list = ExcelPoiUtils.readExcel("C:\\Users\\11190\\Desktop\\测试user (2).xls");
-       // List<String[]> list = re.readExcel("c:/群组.xlsx");
-        if (list != null) {
-            for (int i = 0; i < list.size(); i++) {
-                System.out.println("第" + (i + 1) + "行");
-                String[] cellList = list.get(i);
-                for (int j = 0; j < cellList.length; j++) {
-                    System.out.print("\t第" + (j + 1) + "列值：");
-                    System.out.println(cellList[j]);
-                }
-            }
-        }
+        List<String[]> list = ExcelPoiUtils.readExcel("C:\\Users\\11190\\Desktop\\商品类目.xlsx");
+
+       list.stream().collect(groupingBy(e->e[2],groupingBy(r->r[3],groupingBy(t->t[4]))))
+               .forEach((k,v)->{
+                   System.out.println("大类："+k+",V的数量："+v.size());
+                   v.forEach((e,f)->{
+                       System.out.println("中类："+e+",f的数量："+f.size());
+                       f.forEach((m,n)->{
+                           System.out.println("小类："+m+",n的数量："+n.size());
+                       });
+
+
+                   });
+
+               });
+
+
 
         System.out.println("===============================================");
         try {
-
-            ExcelPoiUtils.writeExcel("D:\\test.xls");
+           // ExcelPoiUtils.writeExcel("D:\\test.xls");
         }catch (Exception e){
             e.printStackTrace();
         }
